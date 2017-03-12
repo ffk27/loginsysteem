@@ -1,6 +1,17 @@
 <?php
-class LoginForm
+require_once 'Page.php';
+
+class LoginForm implements Page
 {
+    public function name()
+    {
+        return 'login';
+    }
+
+    function resource() {
+        return array(array('type'=>'style','url'=>'views/style/forms.css'),array('type'=>'script','url'=>'views/script/login.js'));
+    }
+
     function html()
     {
         $html = <<<EOT
@@ -20,7 +31,7 @@ EOT;
 	</div>
 	<button id="inlogknop">Inloggen</button>
 	<br/><br/>
-<a href="#" onclick="setContent('registreer')">Registreren</a>
+<a href="?registreer">Registreren</a>
 EOT;
         return $html;
     }

@@ -1,6 +1,17 @@
 <?php
-class RegistreerForm
+require_once 'Page.php';
+
+class RegistreerForm implements Page
 {
+    public function name()
+    {
+        return 'registreer';
+    }
+
+    function resource() {
+        return array(array('type'=>'style','url'=>'views/style/forms.css'),array('type'=>'script','url'=>'views/script/registreer.js'));
+    }
+
     function html() {
         $html = <<<EOT
 <h1>Registreer</h1>
@@ -11,7 +22,7 @@ class RegistreerForm
 <tr><td>Wachtwoord:</td><td><input type="text" name="wachtwoord"/></td></tr>
 <tr><td>Wachtwoord herhalen:</td><td><input type="text" name="wachtwoordh"/></td></tr>
 </table>
-<p>Wachtwoord moet minimaal 8 tekens, waarvan minimaal één cijfers en één speciaal teken hebben.</p>
+<p>Wachtwoord moet minimaal 8 tekens hebben, waarvan minimaal één cijfers en één speciaal teken.</p>
   	<div id="foutmelding"></div>
 <button id="registreerknop">Registreer</button>
 EOT;

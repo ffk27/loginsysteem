@@ -28,7 +28,7 @@ $(document).ready(function() {
 
 function login(gebruikersnaam,wachtwoord,captcha) {
 	$.ajax({
-		url: 'webservice/login.php',
+		url: 'controllers/login.php',
 		data: {'gebruiker': gebruikersnaam, 'ww': wachtwoord, 'g-recaptcha-response': captcha},
 		success: function(json) {
 			if (json.antwoordcode>1) {
@@ -36,7 +36,7 @@ function login(gebruikersnaam,wachtwoord,captcha) {
             }
 			switch (json.antwoordcode) {
 				case 1:
-					setContent('welkom');
+					setContent('index');
                     break;
 				case 3:
                     if ($('#captcha').html().trim() == '') {

@@ -1,23 +1,26 @@
 $(document).ready(function() {
-	setContent('login');
+    var content = window.location.search.substring(1);
+	setContent(content);
 });
 
 function setContent(p) {
+    if (isEmpty(p)) {
+        p='index';
+    }
 	$.get({
 		url: 'controller.php',
 		data: {'p': p},
-		success: function(html) {
-			if (p=='login') {
-            	addResource('style','views/style/forms.css');
-            	addResource('script','views/script/login.js');
+		success: function(json) {
+            window.location.search.replace('?'+json.page);
+			//todo: remove resource
+            if (json.resource.length>0) {
+            	for (var i=0; i<json.resource.length; i++) {
+            		addResource(json.resource[i].type,json.resource[i].url);
+				}
 			}
-			if (p=='registreer') {
-                addResource('style','views/style/forms.css');
-                addResource('script','views/script/registreer.js');
-            }
-			$('main').html(html);
+			$('main').html(json.html);
 		},
-		dataType: 'html',
+		dataType: 'json',
 		async: true
 	});
 }
