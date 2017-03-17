@@ -28,7 +28,7 @@ $(document).ready(function() {
 
 function login(gebruikersnaam,wachtwoord,captcha) {
 	$.ajax({
-		url: 'controllers/login.php',
+		url: '../controllers/login.php',
 		data: {'gebruiker': gebruikersnaam, 'ww': wachtwoord, 'g-recaptcha-response': captcha},
 		success: function(json) {
 			if (json.antwoordcode>1) {

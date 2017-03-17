@@ -8,7 +8,7 @@ function setContent(p) {
         p='index';
     }
 	$.get({
-		url: 'controller.php',
+		url: 'controllers/controller.php',
 		data: {'p': p},
 		success: function(json) {
             window.location.search.replace('?'+json.page);
