@@ -41,7 +41,7 @@ function login(gebruikersnaam,wachtwoord,captcha) {
 				case 3:
                     if ($('#captcha').html().trim() == '') {
 						$.get({ 
-							url: 'controller.php',
+							url: '../controllers/controller.php',
 							data: {'part': 'captcha'},
 							success: function(html) {
 								$('#captcha').html(html);

@@ -9,7 +9,7 @@ class LoginForm implements Page
     }
 
     function resource() {
-        return array(array('type'=>'style','url'=>'views/style/forms.css'),array('type'=>'script','url'=>'views/script/login.js'));
+        return array(array('type'=>'style','url'=>'style/forms.css'),array('type'=>'script','url'=>'script/login.js'));
     }
 
     function html()

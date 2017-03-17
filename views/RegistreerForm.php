@@ -9,7 +9,7 @@ class RegistreerForm implements Page
     }
 
     function resource() {
-        return array(array('type'=>'style','url'=>'views/style/forms.css'),array('type'=>'script','url'=>'views/script/registreer.js'));
+        return array(array('type'=>'style','url'=>'style/forms.css'),array('type'=>'script','url'=>'script/registreer.js'));
     }
 
     function html() {
