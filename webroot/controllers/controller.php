@@ -7,7 +7,7 @@ if (isset($_GET['p'])) {
     $pageaobj=null;
     if ($page=="index") {
         if (isLoggedIn()) {
-            require_once 'views/Index.php';
+            require_once '../../views/Index.php';
             $pageaobj = new Index();
         }
         else {
@@ -16,7 +16,7 @@ if (isset($_GET['p'])) {
     }
     if ($page=="login") {
         if (isLoggedIn()) {
-            require_once 'views/Index.php';
+            require_once '../../views/Index.php';
             $pageaobj = new Index();
         }
         else {
@@ -33,11 +33,11 @@ if (isset($_GET['p'])) {
     }
     if ($page=="registreer") {
         if (!isLoggedIn()) {
-            require_once 'views/RegistreerForm.php';
+            require_once '../../views/RegistreerForm.php';
             $pageaobj = new RegistreerForm();
         }
         else {
-            require_once 'views/Index.php';
+            require_once '../../views/Index.php';
             $pageaobj = new Index();
         }
     }
@@ -65,7 +65,7 @@ function isLoggedIn() {
 }
 
 function loginPage() {
-    require_once 'views/LoginForm.php';
+    require_once '../../views/LoginForm.php';
     return new LoginForm();
 }
 ?>
