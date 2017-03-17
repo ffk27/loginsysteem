@@ -77,7 +77,7 @@ function geefAntwoord($code) {
 function login($gebruikersnaam,$wachtwoord) {
 	$success=false;
     try {
-        include 'dbinfo.php';
+        include '../../dbinfo.php';
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $stmt = $conn->prepare("SELECT Id, niveau, salt, hash FROM Gebruikers WHERE gebruikersnaam=?;");
         $stmt->execute(array($gebruikersnaam));
