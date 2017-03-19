@@ -26,8 +26,12 @@ if ($ok) {
         respond(2);
     }
     else {
-        signup($naam,$gebnaam,$email,$ww);
-        respond(1);
+        if (signup($naam,$gebnaam,$email,$ww)) {
+            respond(1);
+        }
+        else {
+            respond(4);
+        }
     }
 }
 else {
@@ -57,7 +61,7 @@ function usernameExists($username) {
     try {
         include '../dbinfo.php';
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $stmt = $conn->prepare("SELECT id FROM Gebruikers WHERE gebruikersnaam=?;");
+        $stmt = $conn->prepare("SELECT Id FROM Gebruikers WHERE gebruikersnaam=?;");
         $stmt->execute(array($username));
         $result = $stmt->fetch();
         if ($result) {
@@ -67,8 +71,7 @@ function usernameExists($username) {
         $conn=null;
     }
     catch (PDOException $e) {
-        //print("Error connecting to SQL Server.");
-        //die(print_r($e));
+        return false;
     }
     return false;
 }
@@ -84,10 +87,11 @@ function signup($name,$username,$email,$password) {
 
         $stmt=null;
         $conn=null;
+
+        return true;
     }
     catch (PDOException $e) {
-        //print("Error connecting to SQL Server.");
-        //die(print_r($e));
+        return false;
     }
     return false;
 }

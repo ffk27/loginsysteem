@@ -38,7 +38,14 @@ function registreer(naam,gebnaam,email,ww) {
         data: {'naam': naam, 'gebnaam': gebnaam, 'email': email, 'ww': ww},
         method: 'POST',
         success: function (json) {
-            console.log(json);
+            if (json.antwoordcode>1) {
+                setErrors([json.melding]);
+            }
+            switch (json.antwoordcode) {
+                case 1:
+                    setContent('login');
+                    break;
+            }
         },
         dataType: 'json'
     });

@@ -51,7 +51,7 @@ elseif (isset($_GET['post'])) {
     }
     else {
         //only allow login and signup when not logged in.
-        if ($post=='registreer') {
+        if ($post=='registreerform') {
             require_once '../controllers/registreer.php';
         }
         if ($post=='login') {

@@ -1,12 +1,11 @@
-#foutmelding {
+#errors {
     color: red;
 }
 
-#formulier td  {
+#form td  {
     padding-right: 10px;
     padding-bottom: 10px;
 }
-
 
 input:required:invalid, input:focus:invalid {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAmJJREFUeNqkUk1PE1EUPW+GlqEfENoqBAlaMUJCCPEjYoyJiStXJrp3AVF/gHHnxqUrd2yUwKKuZWXiyujGqJEYYvhYgCVI+ai0aKdMp5333njvFEYXdeUkZ/Lm3HNO3723wvd9/M/Txq/dc8bfXILwgHCDcOmQ+0R4TXhKqB4Je75oCL5BYSwMuEaYTVy+nrXOjCCaSgdko1yCu7qI6oc3efqcILxj/sTCYcD6qMnft9oHBl8mxsYR0x70Fmn3fzRju4/B6MvCMSKoLnxEfWPtNrFzp76qZgueEimaRC41Oo7o+gq8UhFQEjiaT20TancH0fRxxElj57/lBDBAlXJw95oUD5Pnr8bNtSV429uQtTpkQ0F6ugk+E8c11rCWPewNAlwlbkYjFmSp/MfcClwjDWvZE25BK3HWUAqe41I/Gpn5UsuV7V2goZLGaDSglBgIAyit7rleRNcVfE/9c+ce1YVWMKSPuhJmGGBLUaCQIQMmfLrqco/VMiDRFYGImNAy8HwPA4oNvC0Vy0OZji4o24HVYbYMUJp+gjSkDTzhEF85aiq/tOpUEynoWBLKNyAlb0A1QWfmuMYa1rInDJhzveXPdf14I19AJdUPZHqh2+NQ1BKDz8zZ6X5srBfAWvaELeSSCXnHrk7/2iweXNwtP8qePtmXzg4j5svg6o5oQ2nvJ/Lzi1vzUj6Zqrkv2MO14K88G+8MhJOO3TlomMOTUetutxBXLCFGgi35/uK+77+fabjTa1qtzMSSFeYnDirNgOcdneGg7rs2t9VLYDJ+SB8Q2LTzzErqI+29WgW/BRgAdiFOzY2JVIEAAAAASUVORK5CYII=');

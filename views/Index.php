@@ -25,5 +25,4 @@ EOT;
         $html .= '<a href="#" onclick="setContent(\'loguit\')">Uitloggen</a>';
         return $html;
     }
-
 }

@@ -14,6 +14,7 @@ class Gebruiker
     private $id;
     /**
      * @var string
+     *
      */
     private $naam;
     private $gebnaam;

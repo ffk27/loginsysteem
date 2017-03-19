@@ -10,6 +10,13 @@ function read_post_string($name) {
     return trim(read_post($name));
 }
 
+function read_array($name,$array) {
+    if (isset($array[$name])) {
+        return $array[$name];
+    }
+    return null;
+}
+
 function createSalt() {
     $salt='';
     for ($i=0; $i<10; $i++) {
