@@ -28,7 +28,7 @@ $(document).ready(function() {
 
 function login(gebruikersnaam,wachtwoord,captcha) {
 	$.ajax({
-		url: '../controllers/login.php',
+		url: '../controller.php?post=login',
 		data: {'gebruiker': gebruikersnaam, 'ww': wachtwoord, 'g-recaptcha-response': captcha},
 		success: function(json) {
 			if (json.antwoordcode>1) {
@@ -41,8 +41,8 @@ function login(gebruikersnaam,wachtwoord,captcha) {
 				case 3:
                     if ($('#captcha').html().trim() == '') {
 						$.get({ 
-							url: '../controllers/controller.php',
-							data: {'part': 'captcha'},
+							url: '../controller.php',
+							data: {'html': 'captcha'},
 							success: function(html) {
 								$('#captcha').html(html);
 							}, 

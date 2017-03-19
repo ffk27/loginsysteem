@@ -2,7 +2,7 @@
 CREATE TABLE [dbo].[Gebruikers] (
     [Id]             INT            IDENTITY (1, 1) NOT NULL,
     [naam]           NVARCHAR (45)  NOT NULL,
-    [gebruikersnaam] NVARCHAR (30)  NOT NULL,
+    [gebruikersnaam] NVARCHAR (30)  NOT NULL UNIQUE,
     [niveau]         INT            NOT NULL,
     [email]          NVARCHAR (254) NOT NULL,
     [salt]           CHAR(10)  NOT NULL,

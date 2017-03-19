@@ -8,8 +8,8 @@ function setContent(p) {
         p='index';
     }
 	$.get({
-		url: 'controllers/controller.php',
-		data: {'p': p},
+		url: 'controller.php',
+		data: {'page': p},
 		success: function(json) {
             window.location.search.replace('?'+json.page);
 			//todo: remove resource
@@ -19,7 +19,7 @@ function setContent(p) {
 				}
 			}
 			$('main').html(json.html);
-		},
+        },
 		dataType: 'json',
 		async: true
 	});

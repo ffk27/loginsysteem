@@ -8,7 +8,13 @@
  */
 class Gebruiker
 {
+    /**
+     * @var integer
+     */
     private $id;
+    /**
+     * @var string
+     */
     private $naam;
     private $gebnaam;
     private $niveau;
