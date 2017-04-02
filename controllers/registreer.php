@@ -1,41 +1,47 @@
 <?php
-require_once '../utils.php';
+require_once '../views/Form.php';
+$registreerForm = new Form('registreerform',array(
+    array('text'=>'Naam','name'=>'naam','required'=>true,'minlength'=>2,'maxlength'=>45),
+    array('text'=>'Gebruikersnaam','name'=>'gebnaam','required'=>true,'minlength'=>3,'maxlength'=>30,'pattern'=>'\w+'),
+    array('text'=>'E-mailadres','name'=>'email','type'=>'email','required'=>true,'minlength'=>3,'maxlength'=>254,'pattern'=>'\S+@\S+'),
+    array('text'=>'Wachtwoord','name'=>'wachtwoord','type'=>'password','required'=>true,'minlength'=>8,'pattern'=>'(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}', 'onkeypress'=>'document.getElementsByName(\'wachtwoordh\')[0].pattern = \'(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}\''),
+    array('text'=>'Wachtwoord herhalen','name'=>'wachtwoordh','type'=>'password','required'=>true,'minlength'=>8, 'onkeypress'=>'this.pattern = \'\\\b\'+document.getElementsByName(\'wachtwoord\')[0].value+\'\\\b\'')
+),'Registreer','POST',$controller);
 
-$naam = read_post_string('naam');
-$gebnaam = read_post_string('gebnaam');
-$email = read_post_string('email');
-$ww = read_post('ww');
+switch ($a) {
+    case 'POST':
+    {
+        $ok = $registreerForm->isValidData($_POST);
+        $naam = read_array('naam',$_POST);
+        $gebnaam = read_array('gebnaam',$_POST);
+        $email = read_array('email',$_POST);
+        $ww = read_array('wachtwoord',$_POST);
 
-$ok = true;
-
-if (strlen($naam)<2 || strlen($naam)>45) {
-    $ok=false;
-}
-else if (strlen($gebnaam)<3 || strlen($gebnaam)>30 || !preg_match('/\w+/',$gebnaam)) {
-    $ok=false;
-}
-else if (strlen($gebnaam)<3 || strlen($gebnaam)>254 || !preg_match('/\S+@\S+/',$email)) {
-    $ok=false;
-}
-else if (strlen($gebnaam)<8 || !preg_match('/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/',$ww)) {
-    $ok=false;
-}
-
-if ($ok) {
-    if (usernameExists($gebnaam)) {
-        respond(2);
-    }
-    else {
-        if (signup($naam,$gebnaam,$email,$ww)) {
-            respond(1);
+        if ($ok) {
+            if (usernameExists($gebnaam)) {
+                respond(2);
+            }
+            else {
+                if (signup($naam,$gebnaam,$email,$ww)) {
+                    respond(1);
+                }
+                else {
+                    respond(4);
+                }
+            }
         }
         else {
-            respond(4);
+            respond(3);
         }
+        break;
     }
-}
-else {
-    respond(3);
+    default:
+    {
+        require_once '../views/RegistreerPage.php';
+        $registreerPage = new RegistreerPage();
+        $registreerPage->formhtml=$registreerForm->html();
+        $registreerPage->pagejson();
+    }
 }
 
 function respond($code) {
@@ -54,12 +60,13 @@ function respond($code) {
             $melding='Database-fout. Probeer het opnieuw.';
             break;
     }
-    echo json_encode(array("antwoordcode"=>$code,"melding"=>$melding));
+    echo json_encode(array("code"=>$code,"error"=>$melding));
 }
 
 function usernameExists($username) {
+    require_once '../dbinfo.php';
     try {
-        include '../dbinfo.php';
+        $conn = getConnection();
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $stmt = $conn->prepare("SELECT Id FROM Gebruikers WHERE gebruikersnaam=?;");
         $stmt->execute(array($username));
@@ -76,9 +83,18 @@ function usernameExists($username) {
     return false;
 }
 
+function createSalt() {
+    $salt='';
+    for ($i=0; $i<10; $i++) {
+        $salt .= chr(rand(33,126));
+    }
+    return $salt;
+}
+
 function signup($name,$username,$email,$password) {
+    require_once '../dbinfo.php';
     try {
-        include '../dbinfo.php';
+        $conn = getConnection();
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $salt = createSalt();
         $hash = hash('sha256', $password.$salt);

@@ -6,7 +6,7 @@ require_once 'Page.php';
  * Date: 3/12/2017
  * Time: 6:01 PM
  */
-class Index implements Page
+class Index extends Page
 {
     public function name()
     {

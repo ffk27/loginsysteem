@@ -3,13 +3,10 @@ $(document).ready(function() {
 	setContent(content);
 });
 
-function setContent(p) {
-    if (isEmpty(p)) {
-        p='index';
-    }
+function setContent(c) {
 	$.get({
 		url: 'controller.php',
-		data: {'page': p},
+		data: {'c': c},
 		success: function(json) {
             window.location.search.replace('?'+json.page);
 			//todo: remove resource
@@ -20,8 +17,7 @@ function setContent(p) {
 			}
 			$('main').html(json.html);
         },
-		dataType: 'json',
-		async: true
+		dataType: 'json'
 	});
 }
 

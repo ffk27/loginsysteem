@@ -20,12 +20,18 @@ class Form
      * @var string
      */
     private $submitname;
+    /**
+     * @var string
+     */
+    private $controller;
 
-    function __construct($id,$fields,$submitname)
+    function __construct($id,$fields,$submitname,$method,$controller)
     {
         $this->id=$id;
         $this->fields=$fields;
         $this->submitname=$submitname;
+        $this->method=$method;
+        $this->controller=$controller;
     }
 
     /**
@@ -42,11 +48,14 @@ class Form
                 $text = read_array('text',$this->fields[$i]);
                 $name = read_array('name',$this->fields[$i]);
                 $type = read_array('type',$this->fields[$i]);
+                $value = read_array('value',$this->fields[$i]);
                 if (!$type) { $type='text'; }
                 $required = read_array('required',$this->fields[$i]);
                 $minlength = read_array('minlength',$this->fields[$i]);
                 $maxlength = read_array('maxlength',$this->fields[$i]);
                 $pattern = read_array('pattern',$this->fields[$i]);
+                $onchange = read_array('onchange',$this->fields[$i]);
+                $onkeypress = read_array('onkeypress',$this->fields[$i]);
 
                 $html .= '<tr><td>'.$text.':</td>';
                 $html .= '<td><input type="'.$type.'" ';
@@ -55,6 +64,8 @@ class Form
                 if ($minlength) { $html.= 'minlength="'.$minlength.'" '; }
                 if ($maxlength) { $html.= 'maxlength="'.$maxlength.'" '; }
                 if ($pattern) { $html.= 'pattern="'.$pattern.'" '; }
+                if ($onchange) { $html.= 'onchange="'.$onchange.'" '; }
+                if ($onkeypress) { $html.= 'onkeypress="'.$onkeypress.'" '; }
                 $html .= '/></td></tr>';
                 $html .= "\n";
             }
@@ -80,7 +91,7 @@ class Form
 
         function submit() {
             $.ajax({
-                url: 'controller.php?post={$this->id}',data: {
+                url: 'controller.php?c={$this->controller}&a={$this->method}',data: {
 EOT;
         for ($i=0; $i<count($this->fields); $i++) {
             $name = read_array('name',$this->fields[$i]);
@@ -88,9 +99,10 @@ EOT;
         }
         $html = substr($html,0,strlen($html)-1);
         $html.= <<<EOT
-                },method: 'POST',
+                },method: '{$this->method}',
                 success: function (json) {
-                    if (json.code==1) {
+                    console.log(json);
+                    if (json.code===1) {
                         setContent('login');
                     }
                     else  {
@@ -104,5 +116,40 @@ EOT;
 
 EOT;
         return $html;
+    }
+
+    /**
+     * @param array $data $_GET or G_POST
+     * @return bool
+     */
+    function isValidData($data) {
+        require_once '../utils.php';
+
+        foreach ($this->fields as $field) {
+            $name = read_array('name',$field);
+            $value = read_array($name,$data);
+            $required = read_array('required',$field);
+            $minlength = read_array('minlength',$field);
+            $maxlength = read_array('maxlength',$field);
+            $pattern = read_array('pattern',$field);
+            if ($value !== null) {
+                if ($required && strlen($value)===0) {
+                    return false;
+                }
+                if ($minlength !== null && strlen($value) < $minlength) {
+                    return false;
+                }
+                if ($maxlength !== null && strlen($value) > $maxlength) {
+                    return false;
+                }
+                if ($pattern !==null && !preg_match('/'.$pattern.'/',$value)) {
+                    return false;
+                }
+            }
+            else if ($required) {
+                return false;
+            }
+        }
+        return true;
     }
 }

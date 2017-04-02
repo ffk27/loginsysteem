@@ -1,7 +1,7 @@
 <?php
 require_once 'Page.php';
 
-class LoginForm implements Page
+class LoginPage extends Page
 {
     public function name()
     {

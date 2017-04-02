@@ -6,20 +6,28 @@
  * Date: 3/12/2017
  * Time: 7:37 PM
  */
-interface Page
+abstract class Page
 {
     /**
      * @return string
      */
-    public function name();
+    public abstract function name();
 
     /**
      * @return array
      */
-    public function resource();
+    public abstract function resource();
 
     /**
      * @return string
      */
-    public function html();
+    public abstract function html();
+
+    /**
+     * @return string
+     */
+    public function pagejson() {
+        header('Content-Type: application/json');
+        echo json_encode(array('page'=>$this->name(), 'html'=>$this->html(), 'resource'=>$this->resource()));
+    }
 }
