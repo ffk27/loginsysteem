@@ -18,8 +18,8 @@ class Gebruiker
      */
     private $naam;
     private $gebnaam;
-    private $niveau;
     private $email;
+    private $niveau;
     private $aanmelddatum;
 
     public function __construct($id, $naam, $gebnaam, $niveau, $email, $aanmelddatum)

@@ -1,33 +1,19 @@
 <?php
 switch ($a) {
-	case 'post':
+	case 'POST':
 	{
-        if (!isset($_SESSION["inlogpoginen"])) {
-            $_SESSION["inlogpoginen"]=0;
-        }
         $input_gebnaam = trim($_POST['gebruiker']);
         $input_ww = trim($_POST['ww']);
 
         if (!empty($input_gebnaam) && !empty($input_ww)) {
-            $norobot=true;
-            if ($_SESSION["inlogpoginen"]>3) {
-                $norobot = isnoRobot($_POST['g-recaptcha-response']);
-            }
+            $norobot = isnoRobot($_POST['g-recaptcha-response']);
             if ($norobot) {
-                require_once 'data_gebruiker.php';
                 $success = login($input_gebnaam,$input_ww);
                 if ($success===true) {
-                    $_SESSION["inlogpoginen"]=0;
                     geefAntwoord(1);
                 }
                 else {
-                    $_SESSION["inlogpoginen"]++;
-                    if ($_SESSION["inlogpoginen"]<3) {
-                        geefAntwoord(2);
-                    }
-                    else {
-                        geefAntwoord(3);
-                    }
+                    geefAntwoord(2);
                 }
             }
             else {
@@ -54,9 +40,6 @@ function geefAntwoord($code) {
 			break;
 		case 2:
 			$melding='Verkeerde gebruikersnaam of wachtwoord.';
-			break;
-		case 3:
-			$melding='Verkeerde gebruikersnaam of wachtwoord. Verifieer uzelf.';
 			break;
 		case 4:
 			$melding='U bent een robot.';

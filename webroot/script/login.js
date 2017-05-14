@@ -19,7 +19,7 @@ $(document).ready(function() {
                     zetFoutmelding("Fout: Verifieer dat u geen robot bent.");
                 }
 			}
-			if (captchafield.length==0 || (captchafield.length>0 && !isEmpty(captcha))) {
+			if (captchafield.length===0 || (captchafield.length>0 && !isEmpty(captcha))) {
                 login(gebruikersnaam,wachtwoord,captcha);
             }
         }
@@ -28,7 +28,7 @@ $(document).ready(function() {
 
 function login(gebruikersnaam,wachtwoord,captcha) {
 	$.ajax({
-		url: '../controller.php?post=login',
+		url: '../controller.php?c=login&a=POST',
 		data: {'gebruiker': gebruikersnaam, 'ww': wachtwoord, 'g-recaptcha-response': captcha},
 		success: function(json) {
 			if (json.antwoordcode>1) {
@@ -39,7 +39,7 @@ function login(gebruikersnaam,wachtwoord,captcha) {
 					setContent('index');
                     break;
 				case 3:
-                    if ($('#captcha').html().trim() == '') {
+                    if ($('#captcha').html().trim() === '') {
 						$.get({ 
 							url: '../controller.php',
 							data: {'html': 'captcha'},

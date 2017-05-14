@@ -11,13 +11,12 @@ $registreerForm = new Form('registreerform',array(
 switch ($a) {
     case 'POST':
     {
-        $ok = $registreerForm->isValidData($_POST);
         $naam = read_array('naam',$_POST);
         $gebnaam = read_array('gebnaam',$_POST);
         $email = read_array('email',$_POST);
         $ww = read_array('wachtwoord',$_POST);
 
-        if ($ok) {
+        if ($registreerForm->isValidData($_POST)) {
             if (usernameExists($gebnaam)) {
                 respond(2);
             }
@@ -109,6 +108,5 @@ function signup($name,$username,$email,$password) {
     catch (PDOException $e) {
         return false;
     }
-    return false;
 }
 ?>

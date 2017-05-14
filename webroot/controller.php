@@ -15,7 +15,14 @@ function getController($controller)
         require_once '../controllers/' . $controller . '.php';
     }
     else {
-        require_once '../controllers/index.php';
+        if ($controller === 'loguit') {
+            session_destroy();
+            require_once '../controllers/login.php';
+        } elseif (isLoggedIn()) {
+            require_once '../controllers/index.php';
+        } else {
+            require_once '../controllers/login.php';
+        }
     }
 }
 
@@ -24,12 +31,5 @@ function isLoggedIn() {
         return true;
     }
     return false;
-}
-
-function getCaptcha() {
-    return <<<EOT
-  <script src="https://www.google.com/recaptcha/api.js"></script>
-<div class="g-recaptcha" data-sitekey="6LeLixgUAAAAAMQBOtwf_ujVXetPHtBY-tW66AhA"></div>
-EOT;
 }
 ?>
