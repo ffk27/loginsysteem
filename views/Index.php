@@ -8,21 +8,25 @@ require_once 'Page.php';
  */
 class Index extends Page
 {
-    public function name()
+    public function getName()
     {
         return 'index';
     }
 
-    public function resource()
+    public function getResources()
     {
         return array();
     }
 
-    function html() {
-        $html =  <<<EOT
+    function getHtml() {
+        $html = <<<EOT
 <h1>Index</h1>
+<ul>
+<li><a href="#" onclick="setContent('twofactor')">Twee-factor-authenticatie instellen</a></li>
+<li><a href="#" onclick="setContent('loguit')">Uitloggen</a></li>
+</ul>
+
 EOT;
-        $html .= '<a href="#" onclick="setContent(\'loguit\')">Uitloggen</a>';
         return $html;
     }
 }

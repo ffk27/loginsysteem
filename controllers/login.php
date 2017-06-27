@@ -1,36 +1,32 @@
 <?php
-switch ($a) {
-	case 'POST':
-	{
-        $input_gebnaam = trim($_POST['gebruiker']);
-        $input_ww = trim($_POST['ww']);
+if (!isLoggedIn()) {
+    switch ($a) {
+        case 'POST': {
+            $input_gebnaam = trim($_POST['gebruiker']);
+            $input_ww = trim($_POST['ww']);
 
-        if (!empty($input_gebnaam) && !empty($input_ww)) {
-            $norobot = isnoRobot($_POST['g-recaptcha-response']);
-            if ($norobot) {
-                $success = login($input_gebnaam,$input_ww);
-                if ($success===true) {
-                    geefAntwoord(1);
-                }
-                else {
-                    geefAntwoord(2);
+            if (!empty($input_gebnaam) && !empty($input_ww)) {
+                $norobot = isnoRobot($_POST['g-recaptcha-response']);
+                if ($norobot) {
+                    $success = login($input_gebnaam, $input_ww);
+                    if ($success === true) {
+                        geefAntwoord(1);
+                    } else {
+                        geefAntwoord(2);
+                    }
+                } else {
+                    geefAntwoord(4);
                 }
             }
-            else {
-                geefAntwoord(4);
-                $_SESSION["inlogpoginen"]++;
-            }
+            break;
         }
-        break;
+        default: {
+            require_once '../views/LoginPage.php';
+            $loginpage = new LoginPage();
+            $loginpage->echoJSON();
+        }
     }
-	default:
-	{
-		require_once '../views/LoginPage.php';
-		$loginpage = new LoginPage();
-		$loginpage->pagejson();
-	}
 }
-
 
 function geefAntwoord($code) {
 	$melding='';
@@ -54,13 +50,13 @@ function login($gebruikersnaam,$wachtwoord) {
     try {
         $conn = getConnection();
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $stmt = $conn->prepare("SELECT Id, niveau, salt, hash FROM Gebruikers WHERE gebruikersnaam=?;");
+        $stmt = $conn->prepare("SELECT gebruikersnaam, role, salt, hash FROM Gebruikers WHERE gebruikersnaam=?;");
         $stmt->execute(array($gebruikersnaam));
         $result = $stmt->fetch();
         if ($result) {
             if (hash('sha256',$wachtwoord.$result['salt'])==$result['hash']) {
-                $_SESSION['Id']=$result['Id'];
-                $_SESSION['niveau']=$result['niveau'];
+                $_SESSION['username']=$result['gebruikersnaam'];
+                $_SESSION['role']=$result['role'];
                 $success=true;
             }
         }

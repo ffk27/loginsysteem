@@ -1,45 +1,42 @@
 <?php
-require_once '../views/Form.php';
-$registreerForm = new Form('registreerform',array(
-    array('text'=>'Naam','name'=>'naam','required'=>true,'minlength'=>2,'maxlength'=>45),
-    array('text'=>'Gebruikersnaam','name'=>'gebnaam','required'=>true,'minlength'=>3,'maxlength'=>30,'pattern'=>'\w+'),
-    array('text'=>'E-mailadres','name'=>'email','type'=>'email','required'=>true,'minlength'=>3,'maxlength'=>254,'pattern'=>'\S+@\S+'),
-    array('text'=>'Wachtwoord','name'=>'wachtwoord','type'=>'password','required'=>true,'minlength'=>8,'pattern'=>'(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}', 'onkeypress'=>'document.getElementsByName(\'wachtwoordh\')[0].pattern = \'(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}\''),
-    array('text'=>'Wachtwoord herhalen','name'=>'wachtwoordh','type'=>'password','required'=>true,'minlength'=>8, 'onkeypress'=>'this.pattern = \'\\\b\'+document.getElementsByName(\'wachtwoord\')[0].value+\'\\\b\'')
-),'Registreer','POST',$controller);
+if (!isLoggedIn()) {
+    require_once '../views/Form.php';
+    $registreerForm = new Form('registreerform', array(
+        array('text' => 'Naam', 'name' => 'naam', 'required' => true, 'minlength' => 2, 'maxlength' => 45),
+        array('text' => 'Gebruikersnaam', 'name' => 'gebnaam', 'required' => true, 'minlength' => 3, 'maxlength' => 30, 'pattern' => '\w+'),
+        array('text' => 'E-mailadres', 'name' => 'email', 'type' => 'email', 'required' => true, 'minlength' => 3, 'maxlength' => 254, 'pattern' => '\S+@\S+'),
+        array('text' => 'Wachtwoord', 'name' => 'wachtwoord', 'type' => 'password', 'required' => true, 'minlength' => 8, 'pattern' => '(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}', 'onkeypress' => 'document.getElementsByName(\'wachtwoordh\')[0].pattern = \'(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}\''),
+        array('text' => 'Wachtwoord herhalen', 'name' => 'wachtwoordh', 'type' => 'password', 'required' => true, 'minlength' => 8, 'onkeypress' => 'this.pattern = \'\\\b\'+document.getElementsByName(\'wachtwoord\')[0].value+\'\\\b\'')
+    ), 'Registreer', 'POST', $controller);
 
-switch ($a) {
-    case 'POST':
-    {
-        $naam = read_array('naam',$_POST);
-        $gebnaam = read_array('gebnaam',$_POST);
-        $email = read_array('email',$_POST);
-        $ww = read_array('wachtwoord',$_POST);
+    switch ($a) {
+        case 'POST': {
+            $naam = read_array('naam', $_POST);
+            $gebnaam = read_array('gebnaam', $_POST);
+            $email = read_array('email', $_POST);
+            $ww = read_array('wachtwoord', $_POST);
 
-        if ($registreerForm->isValidData($_POST)) {
-            if (usernameExists($gebnaam)) {
-                respond(2);
-            }
-            else {
-                if (signup($naam,$gebnaam,$email,$ww)) {
-                    respond(1);
+            if ($registreerForm->isValidData($_POST)) {
+                if (usernameExists($gebnaam)) {
+                    respond(2);
+                } else {
+                    if (signup($naam, $gebnaam, $email, $ww)) {
+                        respond(1);
+                    } else {
+                        respond(4);
+                    }
                 }
-                else {
-                    respond(4);
-                }
+            } else {
+                respond(3);
             }
+            break;
         }
-        else {
-            respond(3);
+        default: {
+            require_once '../views/RegistreerPage.php';
+            $registreerPage = new RegistreerPage();
+            $registreerPage->formhtml = $registreerForm->html();
+            $registreerPage->echoJSON();
         }
-        break;
-    }
-    default:
-    {
-        require_once '../views/RegistreerPage.php';
-        $registreerPage = new RegistreerPage();
-        $registreerPage->formhtml=$registreerForm->html();
-        $registreerPage->pagejson();
     }
 }
 
@@ -77,6 +74,7 @@ function usernameExists($username) {
         $conn=null;
     }
     catch (PDOException $e) {
+        echo $e;
         return false;
     }
     return false;
@@ -97,7 +95,7 @@ function signup($name,$username,$email,$password) {
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $salt = createSalt();
         $hash = hash('sha256', $password.$salt);
-        $stmt = $conn->prepare("INSERT INTO Gebruikers (naam,gebruikersnaam,niveau,email,salt,hash) VALUES (?,?,?,?,?,?);");
+        $stmt = $conn->prepare("INSERT INTO Gebruikers (naam,gebruikersnaam,role,email,salt,hash) VALUES (?,?,?,?,?,?);");
         $stmt->execute(array($name,$username,3,$email,$salt,$hash));
 
         $stmt=null;
@@ -106,6 +104,8 @@ function signup($name,$username,$email,$password) {
         return true;
     }
     catch (PDOException $e) {
+        echo $e;
+
         return false;
     }
 }

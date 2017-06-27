@@ -4,10 +4,10 @@ $(document).ready(function() {
 		var wachtwoord = $('[name="wachtwoord"]').val();
 
 		if (isEmpty(gebruikersnaam)) {
-            zetFoutmelding("Fout: Gebruikersnaam niet ingevuld.");
+            setErrors("Gebruikersnaam niet ingevuld.");
 		}
 		else if (isEmpty(wachtwoord)) {
-            zetFoutmelding("Fout: Wachtwoord niet ingevuld.");
+            setErrors("Wachtwoord niet ingevuld.");
 		}
 		else {
 			var captcha = '';
@@ -16,7 +16,7 @@ $(document).ready(function() {
             if (captchafield.length>0) {
                 captcha=captchafield.val();
 				if (isEmpty(captcha)) {
-                    zetFoutmelding("Fout: Verifieer dat u geen robot bent.");
+                    setErrors("Verifieer dat u geen robot bent.");
                 }
 			}
 			if (captchafield.length===0 || (captchafield.length>0 && !isEmpty(captcha))) {
@@ -32,7 +32,7 @@ function login(gebruikersnaam,wachtwoord,captcha) {
 		data: {'gebruiker': gebruikersnaam, 'ww': wachtwoord, 'g-recaptcha-response': captcha},
 		success: function(json) {
 			if (json.antwoordcode>1) {
-                zetFoutmelding(json.melding);
+                setErrors(json.melding);
             }
 			switch (json.antwoordcode) {
 				case 1:
@@ -61,6 +61,6 @@ function login(gebruikersnaam,wachtwoord,captcha) {
 	});
 }
 
-function zetFoutmelding(fout) {
-    $('#foutmelding').html(fout);
+function setErrors(error) {
+    $('#errors').html('Fout: ' + error);
 }

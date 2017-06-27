@@ -11,23 +11,23 @@ abstract class Page
     /**
      * @return string
      */
-    public abstract function name();
+    public abstract function getName();
 
     /**
      * @return array
      */
-    public abstract function resource();
+    public abstract function getResources();
 
     /**
      * @return string
      */
-    public abstract function html();
+    public abstract function getHtml();
 
     /**
-     * @return string
+     * @return void
      */
-    public function pagejson() {
+    public function echoJSON() {
         header('Content-Type: application/json');
-        echo json_encode(array('page'=>$this->name(), 'html'=>$this->html(), 'resource'=>$this->resource()));
+        echo json_encode(array('page'=>$this->getName(), 'html'=>$this->getHtml(), 'resource'=>$this->getResources()));
     }
 }
