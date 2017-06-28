@@ -9,15 +9,16 @@ getController($c);
 
 function getController($controller)
 {
-    $controllers = array('index', 'login', 'registreer', 'twofactor');
+    $controllers = array('index', 'login', 'registreer', 'twofactor', 'otp');
     $a = read_get_string('a');
-    $i = read_get_int('id');
+    $i = read_get_string('i');
     if (in_array($controller, $controllers)) {
         require_once '../controllers/' . $controller . '.php';
     }
     else {
         if ($controller === 'loguit') {
             session_destroy();
+            session_start();
             require_once '../controllers/login.php';
         } else if ($controller === '') {
             if (isLoggedIn()) {
@@ -33,7 +34,7 @@ function getController($controller)
 }
 
 function isLoggedIn() {
-    if (isset($_SESSION['username'])) {
+    if (isset($_SESSION['username']) && ((isset($_SESSION['otp']) && $_SESSION['otp']) || !isset($_SESSION['otp']))) {
         return true;
     }
     return false;

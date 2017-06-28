@@ -35,15 +35,15 @@ class Tweefactor extends Page {
     public function getHtml()
     {
         $html = '<h1>Twee-factor-authenticatie</h1>';
+        $html .= '<div id="otpcontent"></div>';
         if ($this->enabled) {
             $html .= <<<EOT
-<button onclick="disable()">Uitschakelen</button>
+<button id="btn_disableotp" onclick="disable()">Uitschakelen</button>
 EOT;
 
         } else {
             $html .= <<<EOT
-<div id="uriimg"></div>
-<button onclick="enable()">Inschakelen</button>
+<button id="btn_enableotp" onclick="enable()">Inschakelen</button>
 EOT;
         }
         return $html;

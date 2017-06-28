@@ -10,7 +10,11 @@ if (!isLoggedIn()) {
                 if ($norobot) {
                     $success = login($input_gebnaam, $input_ww);
                     if ($success === true) {
-                        geefAntwoord(1);
+                        if (!isset($_SESSION['otp'])) {
+                            geefAntwoord(1);
+                        } else {
+                            geefAntwoord(5);
+                        }
                     } else {
                         geefAntwoord(2);
                     }
@@ -47,25 +51,24 @@ function geefAntwoord($code) {
 function login($gebruikersnaam,$wachtwoord) {
     require_once '../dbinfo.php';
     $success=false;
-    try {
-        $conn = getConnection();
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $stmt = $conn->prepare("SELECT gebruikersnaam, role, salt, hash FROM Gebruikers WHERE gebruikersnaam=?;");
-        $stmt->execute(array($gebruikersnaam));
-        $result = $stmt->fetch();
-        if ($result) {
-            if (hash('sha256',$wachtwoord.$result['salt'])==$result['hash']) {
-                $_SESSION['username']=$result['gebruikersnaam'];
-                $_SESSION['role']=$result['role'];
-                $success=true;
+    $mysqli = getConnection();
+    $stmt = $mysqli->prepare("SELECT gebruikersnaam, role, salt, hash,(SELECT count(*) FROM twofactor WHERE username=?) AS otp FROM Gebruikers WHERE gebruikersnaam=?;");
+    $stmt->bind_param("ss", $gebruikersnaam, $gebruikersnaam);
+    if ($stmt->execute()) {
+        $stmt->bind_result($username,$role,$salt,$hash,$otp);
+        while ($stmt->fetch()) {
+            if (hash('sha256', $wachtwoord . $salt) == $hash) {
+                $_SESSION['username'] = $gebruikersnaam;
+                $_SESSION['role'] = $role;
+                if (boolval($otp)) {
+                    $_SESSION['otp'] = false;
+                }
+                $success = true;
             }
         }
-        $stmt=null;
-        $conn=null;
     }
-    catch (PDOException $e) {
-        return false;
-    }
+    $stmt->close();
+    $mysqli->close();
     return $success;
 }
 ?>

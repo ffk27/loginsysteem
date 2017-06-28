@@ -10,16 +10,23 @@ if (isLoggedIn()) {
     switch ($a) {
         case 'enable': {
             if (!isEnabled()) {
-                $username = $_SESSION['username'];
                 $secret = createSecret();
-                if (add($username,$secret)) {
+                if (add($secret)) {
                     require_once '../libs/TOTP.php';
                     $totp = new TOTP();
                     $totp->setIssuer("Security");
+                    $username = $_SESSION['username'];
                     $totp->setLabel($username);
                     $totp->setSecret($secret);
                     echo json_encode(array('uri'=>$totp->getProvisioningUri()));
                 }
+            }
+            break;
+        }
+        case 'disable': {
+            if (isEnabled()) {
+                disable();
+                echo json_encode(array('disabled'=>true));
             }
             break;
         }
@@ -42,39 +49,49 @@ function isEnabled() {
     require_once '../dbinfo.php';
     $username = $_SESSION['username'];
     $enabled=false;
-    try {
-        $conn = getConnection();
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $stmt = $conn->prepare("SELECT id FROM Twofactor WHERE username=?");
-        $stmt->execute(array($username));
-        $result = $stmt->fetch();
-        if ($result) {
-            $enabled = true;
-        }
-        $stmt=null;
-        $conn=null;
+    $mysqli = getConnection();
+    $stmt = $mysqli->prepare("SELECT count(*) FROM Twofactor WHERE username=?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $stmt->bind_result($count);
+    $stmt->fetch();
+    if ($count> 0) {
+        $enabled=true;
     }
-    catch (PDOException $e) {
-        return false;
-    }
+    $stmt->close();
+    $mysqli->close();
     return $enabled;
 }
 
-function add($username, $secret) {
+function add($secret) {
+    $username = $_SESSION['username'];
+
     require_once '../dbinfo.php';
     $success=false;
-    try {
-        $conn = getConnection();
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $stmt = $conn->prepare("INSERT INTO Twofactor (username, secret) VALUES (?, ?)");
-        $stmt->execute(array($username, $secret));
-        $stmt=null;
-        $conn=null;
-        return true;
+    $mysqli = getConnection();
+    $stmt = $mysqli->prepare("INSERT INTO Twofactor (username, secret) VALUES (?, ?)");
+    $stmt->bind_param("ss", $username, $secret);
+    if ($stmt->execute()) {
+        $success = true;
     }
-    catch (PDOException $e) {
-        return false;
+    $stmt->close();
+    $mysqli->close();
+    return $success;
+}
+
+function disable() {
+    $username = $_SESSION['username'];
+
+    require_once '../dbinfo.php';
+    $success=false;
+    $mysqli = getConnection();
+    $stmt = $mysqli->prepare("DELETE FROM Twofactor WHERE username=?");
+    $stmt->bind_param("s", $username);
+    if ($stmt->execute()) {
+        $success = true;
     }
+    $stmt->close();
+    $mysqli->close();
     return $success;
 }
 ?>

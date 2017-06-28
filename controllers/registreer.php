@@ -60,24 +60,17 @@ function respond($code) {
 }
 
 function usernameExists($username) {
+    $exists = false;
     require_once '../dbinfo.php';
-    try {
-        $conn = getConnection();
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $stmt = $conn->prepare("SELECT Id FROM Gebruikers WHERE gebruikersnaam=?;");
-        $stmt->execute(array($username));
-        $result = $stmt->fetch();
-        if ($result) {
-            return true;
-        }
-        $stmt=null;
-        $conn=null;
-    }
-    catch (PDOException $e) {
-        echo $e;
-        return false;
-    }
-    return false;
+    $mysqli = getConnection();
+    $stmt = $mysqli->prepare("SELECT count(*) FROM Gebruikers WHERE gebruikersnaam=?;");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $stmt->bind_result($count);
+    $stmt->fetch();
+    $stmt->close();
+    $mysqli->close();
+    return boolval($count);
 }
 
 function createSalt() {
@@ -89,24 +82,18 @@ function createSalt() {
 }
 
 function signup($name,$username,$email,$password) {
-    require_once '../dbinfo.php';
-    try {
-        $conn = getConnection();
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $salt = createSalt();
-        $hash = hash('sha256', $password.$salt);
-        $stmt = $conn->prepare("INSERT INTO Gebruikers (naam,gebruikersnaam,role,email,salt,hash) VALUES (?,?,?,?,?,?);");
-        $stmt->execute(array($name,$username,3,$email,$salt,$hash));
-
-        $stmt=null;
-        $conn=null;
-
-        return true;
+    $success = false;
+    $mysqli = getConnection();
+    $salt = createSalt();
+    $hash = hash('sha256', $password.$salt);
+    $stmt = $mysqli->prepare("INSERT INTO Gebruikers (naam,gebruikersnaam,role,email,salt,hash) VALUES (?,?,?,?,?,?);");
+    $role = 3;
+    $stmt->bind_param("ssisss", $name, $username, $role, $email, $salt, $hash);
+    if ($stmt->execute()) {
+        $success = true;
     }
-    catch (PDOException $e) {
-        echo $e;
-
-        return false;
-    }
+    $stmt->close();
+    $mysqli->close();
+    return $success;
 }
 ?>

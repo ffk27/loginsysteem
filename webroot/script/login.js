@@ -10,7 +10,7 @@ $(document).ready(function() {
             setErrors("Wachtwoord niet ingevuld.");
 		}
 		else {
-			var captcha = '';
+            var captcha = '';
 			var captchafield = $('[name="g-recaptcha-response"]');
 
             if (captchafield.length>0) {
@@ -54,6 +54,9 @@ function login(gebruikersnaam,wachtwoord,captcha) {
 				case 4:
                     grecaptcha.reset();
                     break;
+				case 5:
+					setContent('otp');
+					break;
 			}
 		},
 		method: 'POST',
